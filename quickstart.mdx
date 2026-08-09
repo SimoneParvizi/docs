@@ -1,47 +1,74 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Get Started with Blue Accademy in Minutes"
+sidebarTitle: "Quick Start"
+description: "Learn how to run Blue Accademy locally and complete your first spaced-repetition study session with pre-seeded Kubernetes, Docker, or Pulumi decks."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
+This guide walks you through running Blue Accademy on your machine and completing your first spaced-repetition study session. By the end, you'll have the full stack running locally and you'll have reviewed your first deck using the built-in scheduler — all in under five minutes.
 
 ## Prerequisites
 
-Before you begin, you must have:
+Before you begin, make sure you have the following installed:
 
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
+- **Docker** — [Install Docker](https://docs.docker.com/get-docker/)
+- **Docker Compose** (v2 or later, bundled with Docker Desktop) — [Install Docker Compose](https://docs.docker.com/compose/install/)
 
-## Get started
+## Steps
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
+  <Step title="Clone the repository">
+    Clone the Blue Accademy repository to your local machine and move into the project directory.
 
     ```bash
-    npm install your-package
+    git clone https://github.com/SimoneParvizi/blueaccademy.git && cd blueaccademy
     ```
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+
+  <Step title="Start the stack">
+    Bring up all three services with Docker Compose. The first run builds the images before starting the containers.
 
     ```bash
-    your-cli init
+    docker compose -f infra/docker-compose.yml up
+    ```
+
+    This command starts:
+    - **Postgres** on port `5432` — the persistent database
+    - **FastAPI backend** on port `8000` — the API layer and scheduler engine
+    - **React frontend** on port `5173` — the study interface
+
+    The database is seeded automatically on first boot. Wait until you see the backend report that seeding has completed before opening the app.
+  </Step>
+
+  <Step title="Open the app">
+    Once the stack is healthy, open your browser and navigate to the app. Then click **Flashcards** in the navigation to reach the deck library.
+
+    ```
+    http://localhost:5173
     ```
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
 
-    ```bash
-    your-cli start
-    ```
+  <Step title="Select a deck">
+    In the Flashcards view, you'll see the pre-seeded decks that shipped with Blue Accademy. Click a deck to start a study session — for example, **K8s Core Concepts** is a great first stop if you're working toward Kubernetes certification.
+  </Step>
+
+  <Step title="Study your first cards">
+    The study flow is straightforward:
+
+    1. **Read the prompt** on the front of the card.
+    2. **Click the card** to flip it and reveal the answer.
+    3. **Rate your recall** using one of the four buttons:
+
+    | Rating | Label | Meaning |
+    |--------|-------|---------|
+    | 0 | Blackout | Complete blank — you had no idea |
+    | 1 | Hard | You remembered, but it was a struggle |
+    | 2 | Good | You recalled it with minor hesitation |
+    | 3 | Easy | Instant, confident recall |
+
+    The scheduler uses your rating to decide when to show you that card again. Lower ratings bring the card back sooner; higher ratings push it further into the future.
   </Step>
 </Steps>
 
 <Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
-
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
+  Made a mistake on a rating? Press **Cmd+Z** (macOS) or **Ctrl+Z** (Windows/Linux) immediately after rating a card to undo the last review and re-rate it.
 </Tip>

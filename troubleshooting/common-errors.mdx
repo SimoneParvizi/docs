@@ -1,0 +1,201 @@
+---
+title: "Troubleshooting Common Blue Accademy Errors"
+sidebarTitle: "Common Errors"
+description: "How to diagnose and fix the most common errors in Blue Accademy, including database connection issues, import failures, and deck operation errors."
+---
+
+Blue Accademy runs as a three-container stack (Postgres, a FastAPI backend, and a Vite-built frontend). Most errors you'll encounter fall into a small number of predictable categories: the database isn't reachable, a daily limit is masking your cards, an import file is malformed, or the frontend hasn't finished loading. This guide walks you through each scenario with concrete steps to get back on track.
+
+---
+
+## "No database connection is present"
+
+**Symptom:** Instead of your deck list, the Flashcards page shows the message:
+
+> *No database connection is present, so no decks can be shown.*
+> *Start Postgres or configure a local database, then reload the Flashcards page.*
+
+**Cause:** The backend received a database `OperationalError` when trying to query Postgres. It returns an HTTP `503` response, which the frontend detects and translates into this message. This almost always means the `postgres-db` container is not running or not yet healthy.
+
+<Steps>
+  <Step title="Check that all containers are running">
+    From your project root, inspect the current container states:
+
+    ```bash
+    docker compose -f infra/docker-compose.yml ps
+    ```
+
+    You should see `postgres-db`, `backend-api`, and `frontend` all listed with a **running** or **healthy** status. If `postgres-db` shows `exited` or is missing entirely, proceed to the next step.
+  </Step>
+  <Step title="Inspect the Postgres logs">
+    Check for startup errors or crash-loop output:
+
+    ```bash
+    docker compose -f infra/docker-compose.yml logs postgres-db
+    ```
+
+    Look for lines like `database system is ready to accept connections` to confirm a successful start. Common problems at this stage include a port conflict on `5432` (another Postgres instance already running on your host) or a corrupted data volume.
+  </Step>
+  <Step title="Restart the full stack">
+    If the container is stopped or unhealthy, bring everything down cleanly and start again:
+
+    ```bash
+    docker compose -f infra/docker-compose.yml down && \
+    docker compose -f infra/docker-compose.yml up
+    ```
+
+    The `backend-api` service is configured with `depends_on: postgres-db: condition: service_healthy`, so it will not start until Postgres passes its health check (`pg_isready`). Wait for the health checks to pass before opening the app.
+  </Step>
+  <Step title="Reload the Flashcards page">
+    Once all three containers show a healthy status, hard-refresh your browser (`Cmd+Shift+R` / `Ctrl+Shift+R`) to clear any cached error state and reload the deck list.
+  </Step>
+</Steps>
+
+---
+
+## Decks load but show 0 for New / Learn / Due
+
+**Symptom:** Your decks appear in the list, but every deck shows `0` in the **New**, **Learn**, and **Due** columns. Clicking into a deck shows "All caught up!" immediately.
+
+**Cause:** There are three common reasons for this:
+
+- The `newCardsPerDay` setting is set to `0`, so the scheduler introduces no new cards.
+- You have already reached today's new-card limit and all learning/due cards have been reviewed.
+- The database is freshly created and the seed data hasn't been applied yet.
+
+**Fix:**
+
+<Steps>
+  <Step title="Check the newCardsPerDay setting">
+    Open the Settings panel by clicking the **⚙** icon on the Flashcards page. Confirm that `newCardsPerDay` is greater than `0`. The default is a sensible starting value; if it was accidentally set to `0`, update it and return to the deck list.
+  </Step>
+  <Step title="Verify the seed ran successfully">
+    The `backend-api` container runs `uv run python -m backend.app.db.seed` automatically on startup via the `post_start` hook. Check the backend logs to confirm the seed completed:
+
+    ```bash
+    docker compose -f infra/docker-compose.yml logs backend-api | grep -i seed
+    ```
+
+    If you see no seed output or an error, restart the backend container to re-trigger the hook:
+
+    ```bash
+    docker compose -f infra/docker-compose.yml restart backend-api
+    ```
+  </Step>
+  <Step title="Confirm today's quota hasn't been reached">
+    If the seed ran and your settings look correct, you may have genuinely completed today's quota. The scheduler will queue cards again tomorrow based on the intervals calculated during your last session. Increasing `newCardsPerDay` will surface more new cards the next time you open a deck.
+  </Step>
+</Steps>
+
+---
+
+## Anki import errors
+
+**Symptom:** After importing a `.txt` file, the import result banner shows amber text like:
+
+> *✓ 42 cards imported, 3 errors*
+
+The error count and individual error details are listed below the summary.
+
+**Cause:** Each line in the import file is expected to contain exactly one tab character (`\t`) separating the front text from the back text. Lines that don't conform to this format — for example, lines with commas, pipes, or multiple tabs — cannot be parsed and are counted as errors.
+
+**Fix:**
+
+<Steps>
+  <Step title="Open the import file in a text editor">
+    Open your `.txt` file in an editor that can display invisible characters (VS Code, Sublime Text, or `cat -A` in a terminal). Every valid card line should look like:
+
+    ```
+    What is a Kubernetes Pod?[TAB]The smallest deployable unit, containing one or more containers.
+    ```
+
+    Replace `[TAB]` with a literal tab character. Lines with any other separator will fail.
+  </Step>
+  <Step title="Fix or remove malformed lines">
+    - Lines starting with `#` are treated as **comments** and are intentionally skipped — they don't count as errors.
+    - Completely **blank lines** are also silently skipped.
+    - Any other line that doesn't contain exactly one tab between front and back will produce a parse error for that specific line.
+
+    Correct the separator on each failing line, or delete lines you don't need, then re-import.
+  </Step>
+  <Step title="Re-import the corrected file">
+    Use the **↑ import** button in the deck list header again to import the fixed file. Previously imported cards are not duplicated — only new card content is added.
+  </Step>
+</Steps>
+
+<Warning>
+  Anki's default export format uses tabs, but some export settings or third-party tools may substitute commas or semicolons. Always verify the separator before importing.
+</Warning>
+
+---
+
+## Frontend shows a blank page or fails to load
+
+**Symptom:** Navigating to `http://localhost:5173` shows a blank white page, a browser error, or the message:
+
+> *blueaccademy API is running but frontend is not.*
+
+**Cause:** The frontend container depends on `backend-api` being healthy before it starts. If the backend is still in its startup or health-check phase, the frontend may not yet be available. A failed frontend build will also produce a blank page.
+
+**Fix:**
+
+<Steps>
+  <Step title="Wait for the health checks to complete">
+    The `backend-api` service runs a health check every `10s` with up to `5` retries and a `10s` start period. The frontend container won't start until the backend is confirmed healthy. Give the stack up to 60 seconds after `docker compose up` before troubleshooting further.
+  </Step>
+  <Step title="Hard-refresh the browser">
+    Press `Cmd+Shift+R` (macOS) or `Ctrl+Shift+R` (Windows/Linux) to bypass the browser cache and reload from the server. A stale cache can cause a blank page after a rebuild.
+  </Step>
+  <Step title="Check the frontend container logs">
+    ```bash
+    docker compose -f infra/docker-compose.yml logs frontend
+    ```
+
+    Look for build errors or a message indicating the static server failed to start. If you see a non-zero exit code, rebuild the image:
+
+    ```bash
+    docker compose -f infra/docker-compose.yml up --build frontend
+    ```
+  </Step>
+</Steps>
+
+---
+
+## "Could not rename deck" / "Could not update deck tag"
+
+**Symptom:** A toast notification appears with one of these messages after attempting to rename a deck or change its track tag:
+
+> *Could not rename deck*
+> *Could not update deck tag*
+
+In some cases the deck tag error message is more specific:
+
+> *Deck tag update route is not available yet. Restart npm run dev.*
+
+**Cause:** The API call to the rename or tag-update endpoint failed. This typically happens when the frontend version is newer than the running backend (or vice versa), causing a route mismatch. It can also occur after a partial container restart where only one service was updated.
+
+**Fix:**
+
+Restart both the backend and frontend services together to ensure they are running matching versions:
+
+```bash
+docker compose -f infra/docker-compose.yml restart backend-api frontend
+```
+
+If the error persists after restarting, rebuild the images to pick up the latest code:
+
+```bash
+docker compose -f infra/docker-compose.yml up --build backend-api frontend
+```
+
+---
+
+<Note>
+  If none of the steps above resolve your issue, open a bug report on the [Blue Accademy GitHub repository](https://github.com/SimoneParvizi/blueaccademy). Include the full log output from all services to help maintainers diagnose the problem quickly:
+
+  ```bash
+  docker compose -f infra/docker-compose.yml logs
+  ```
+
+  Copy the complete output into your issue.
+</Note>

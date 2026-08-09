@@ -1,0 +1,111 @@
+{
+  "projectType": "saas",
+  "projectName": "Blue Accademy",
+  "projectDescription": "An open-source learning platform for Kubernetes, Docker, and Pulumi featuring spaced-repetition flashcards, curated seed decks, and Anki import support.",
+  "theme": "aspen",
+  "primaryColor": "#3B82F6",
+  "lightColor": "#EFF6FF",
+  "darkColor": "#1E3A5F",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "running-locally"
+            ]
+          },
+          {
+            "group": "Flashcards",
+            "pages": [
+              "flashcards/overview",
+              "flashcards/study-flow",
+              "flashcards/decks",
+              "flashcards/custom-cards",
+              "flashcards/anki-import",
+              "flashcards/settings"
+            ]
+          },
+          {
+            "group": "Learning Tracks",
+            "pages": [
+              "tracks/overview",
+              "tracks/kubernetes",
+              "tracks/docker",
+              "tracks/pulumi"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/faq",
+              "troubleshooting/common-errors"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api/overview"
+            ]
+          },
+          {
+            "group": "Decks & Cards",
+            "pages": [
+              "api/decks",
+              "api/cards",
+              "api/import"
+            ]
+          },
+          {
+            "group": "Settings & Stats",
+            "pages": [
+              "api/settings",
+              "api/stats"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Spaced-repetition flashcard study with SM-2-style scheduling",
+    "Pre-seeded decks for Kubernetes, Docker, and Pulumi",
+    "Custom card creation with front, back, and code-example fields",
+    "Anki deck import (tab-separated .txt or pasted content)",
+    "Deck management: create, rename, delete, and assign track tags",
+    "Per-deck study stats: new, learning, due, and mastered counts",
+    "Undo last review with Cmd/Ctrl+Z keyboard shortcut",
+    "Configurable scheduling settings: daily new cards, learning steps, review intervals"
+  ],
+  "publicApiSurface": [
+    "GET /api/v1/decks — list all decks (optional ?track= filter)",
+    "POST /api/v1/decks — create a deck",
+    "GET /api/v1/decks/{deck_id} — get a deck",
+    "PATCH /api/v1/decks/{deck_id} — rename a deck",
+    "PATCH /api/v1/decks/{deck_id}/track — update deck track tag",
+    "DELETE /api/v1/decks/{deck_id} — delete a deck",
+    "GET /api/v1/decks/{deck_id}/stats — get deck statistics",
+    "GET /api/v1/decks/{deck_id}/cards — list cards in a deck",
+    "POST /api/v1/decks/{deck_id}/cards — add a card to a deck",
+    "GET /api/v1/decks/{deck_id}/due — get cards due for review",
+    "GET /api/v1/cards/{card_id}/progress — get card review progress",
+    "POST /api/v1/cards/{card_id}/review — submit a card review rating",
+    "POST /api/v1/cards/{card_id}/restore-progress — undo a review",
+    "PATCH /api/v1/cards/{card_id} — update a card",
+    "DELETE /api/v1/cards/{card_id} — delete a card",
+    "GET /api/v1/cards/{card_id}/preview-intervals — preview next intervals per rating",
+    "GET /api/v1/flashcard-settings — get global scheduling settings",
+    "PATCH /api/v1/flashcard-settings — update scheduling settings",
+    "GET /api/v1/stats — get overall study stats",
+    "POST /api/v1/import/anki — import cards from Anki export format"
+  ]
+}

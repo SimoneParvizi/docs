@@ -1,0 +1,80 @@
+---
+title: "Managing Flashcard Decks in Blue Accademy"
+sidebarTitle: "Decks"
+description: "Create, rename, delete, and organize flashcard decks by learning track. View per-deck stats including new, learning, and due card counts."
+---
+
+Decks are the primary organizational unit in Blue Accademy's flashcard system. Each deck covers a specific topic within a learning track, and every deck has its own card queue, study stats, and settings. You can study the included pre-seeded decks right away, create your own decks, or import cards from Anki — all from the same Flashcards page.
+
+## Pre-seeded decks
+
+Blue Accademy ships with nine ready-to-use decks organized across three learning tracks. Add your own cards to any of them or use them as a starting point for study.
+
+### Kubernetes
+
+| Deck | Description |
+|---|---|
+| **K8s Core Concepts** | Pods, Deployments, ReplicaSets, DaemonSets, Jobs, CronJobs, and workload fundamentals. |
+| **K8s Networking & Services** | ClusterIP, NodePort, Ingress, NetworkPolicy, DNS, CNI, headless services. |
+| **K8s Config, Storage & Security** | ConfigMaps, Secrets, PVs, PVCs, StorageClasses, RBAC, ServiceAccounts, PSS. |
+| **K8s Operations & Debugging** | HPA, VPA, scheduling, troubleshooting, CRDs, operators, Helm, cluster internals. |
+
+### Docker
+
+| Deck | Description |
+|---|---|
+| **Docker Images & Builds** | Dockerfile instructions, multi-stage builds, layer caching, BuildKit, base images. |
+| **Docker Runtime & Compose** | Containers, volumes, networks, Docker Compose, health checks, resource limits. |
+| **Docker Security & Registry** | Rootless containers, capabilities, scanning, signing, registries, tagging strategies. |
+
+### Pulumi
+
+| Deck | Description |
+|---|---|
+| **Pulumi Core Concepts** | Projects, stacks, resources, inputs/outputs, config, secrets, providers. |
+| **Pulumi Patterns & Operations** | Component resources, automation API, testing, CrossGuard, stack references, ESC. |
+
+## Creating a deck
+
+Click the **folder+ icon** (🗁+) in the deck list header to open the New Deck panel. Fill in the following fields and click **Create Deck**:
+
+- **Title** (required) — the name shown in the deck list.
+- **Description** (optional) — a short summary of what the deck covers.
+- **Track** — choose one of `kubernetes`, `docker`, `pulumi`, or `azure`. This determines which filter tab the deck appears under.
+
+## Renaming a deck
+
+Click the **settings icon** (⚙) on any deck row to open the Deck Settings panel. Update the name in the **Deck name** field, then click **Save Name**. The new name takes effect immediately in the deck list.
+
+## Deleting a deck
+
+Open the Deck Settings panel for the deck you want to remove (click the ⚙ icon on the deck row). Click **Delete Deck**, then confirm by clicking **Delete Permanently** in the confirmation prompt.
+
+<Note>
+  Deleting a deck is irreversible. All cards in the deck and their complete review progress history are permanently removed. There is no way to recover a deleted deck.
+</Note>
+
+## Track tags
+
+Every deck has a color-coded track badge shown on its row in the deck list. To move a deck to a different track, click the track badge on that row. A small picker opens listing all four available tracks. Click the desired track to reassign the deck. Available tracks are:
+
+- `kubernetes` — blue badge
+- `docker` — cyan badge
+- `pulumi` — violet badge
+- `azure` — sky blue badge
+
+## Filtering by track
+
+Above the deck list, a row of filter tabs lets you narrow the view by track. Click **All**, **Kubernetes**, **Docker**, **Pulumi**, or **Azure** to show only decks in that track. The filter applies immediately without a page reload.
+
+## Per-deck stats
+
+Each deck row in the list shows three card counts at a glance:
+
+| Column | Color | Meaning |
+|---|---|---|
+| **New** | Blue | Cards you have never studied that are available today (respects your daily new-card limit) |
+| **Learn** | Red | Learning or relearning cards with a step due now |
+| **Due** | Green | Review cards whose scheduled review date has arrived |
+
+Next to the deck title, a `seen/total` count (for example, `12/40`) shows how many cards in the deck you have reviewed at least once out of the deck's total card count.

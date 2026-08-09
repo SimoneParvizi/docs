@@ -1,0 +1,91 @@
+---
+title: "Blue Accademy REST API Reference Overview"
+sidebarTitle: "Overview"
+description: "Blue Accademy exposes a REST API at /api/v1. All endpoints accept and return JSON. No authentication is required for local deployments."
+---
+
+Blue Accademy exposes a REST API that lets you manage decks, flashcards, review sessions, settings, and statistics programmatically. Whether you are building integrations, writing scripts to seed content, or exploring the platform's internals, every capability available in the UI is also available through this API. When you run Blue Accademy locally, the server starts on port `8000` and all API routes are mounted under the `/api/v1` prefix.
+
+## Base URL
+
+```
+http://localhost:8000/api/v1
+```
+
+All examples in this reference use the local base URL. Replace it with your deployed host when running Blue Accademy on a server.
+
+## Authentication
+
+No authentication is required for local deployments. All endpoints are open by default and assume a trusted, single-user context — which is the normal setup for a self-hosted learning tool.
+
+## Content Type
+
+Every request that includes a body must set the `Content-Type` header to `application/json`. Responses always return `application/json`.
+
+```bash
+-H "Content-Type: application/json"
+```
+
+## Errors
+
+Blue Accademy uses standard HTTP status codes:
+
+- **2xx** — The request succeeded.
+- **4xx** — A client error occurred (missing field, wrong ID, invalid body, etc.).
+- **503** — The database is unavailable.
+
+All error responses return a JSON body with a `detail` field describing what went wrong:
+
+```json
+{
+  "detail": "Deck with id 99 not found."
+}
+```
+
+<Warning>
+  If you receive a `503 Service Unavailable` response, verify that the database
+  container is running and that the connection string in your environment is
+  correct.
+</Warning>
+
+## Endpoint Groups
+
+<CardGroup cols={2}>
+  <Card title="Decks & Cards" icon="layer-group" href="/api/decks">
+    Create and manage decks, add flashcards, and fetch cards due for review.
+  </Card>
+  <Card title="Import" icon="file-import" href="/api/import">
+    Bulk-import flashcards from an Anki tab-separated export file.
+  </Card>
+  <Card title="Settings" icon="sliders" href="/api/settings">
+    Read and update the global flashcard scheduler settings.
+  </Card>
+  <Card title="Stats" icon="chart-bar" href="/api/stats">
+    Retrieve overall study statistics across all decks.
+  </Card>
+</CardGroup>
+
+## Available Endpoints
+
+| Method   | Path                                  | Description                    |
+| -------- | ------------------------------------- | ------------------------------ |
+| `GET`    | `/decks`                              | List all decks                 |
+| `POST`   | `/decks`                              | Create a deck                  |
+| `GET`    | `/decks/{deck_id}`                    | Get a deck                     |
+| `PATCH`  | `/decks/{deck_id}`                    | Rename a deck                  |
+| `PATCH`  | `/decks/{deck_id}/track`              | Update deck track              |
+| `DELETE` | `/decks/{deck_id}`                    | Delete a deck                  |
+| `GET`    | `/decks/{deck_id}/stats`              | Get deck stats                 |
+| `GET`    | `/decks/{deck_id}/cards`              | List deck cards                |
+| `POST`   | `/decks/{deck_id}/cards`              | Add a card                     |
+| `GET`    | `/decks/{deck_id}/due`                | Get due cards                  |
+| `GET`    | `/cards/{card_id}/progress`           | Get card progress              |
+| `POST`   | `/cards/{card_id}/review`             | Submit review                  |
+| `POST`   | `/cards/{card_id}/restore-progress`   | Undo review                    |
+| `PATCH`  | `/cards/{card_id}`                    | Update a card                  |
+| `DELETE` | `/cards/{card_id}`                    | Delete a card                  |
+| `GET`    | `/cards/{card_id}/preview-intervals`  | Preview next intervals         |
+| `GET`    | `/flashcard-settings`                 | Get settings                   |
+| `PATCH`  | `/flashcard-settings`                 | Update settings                |
+| `GET`    | `/stats`                              | Get overall stats              |
+| `POST`   | `/import/anki`                        | Import Anki cards              |

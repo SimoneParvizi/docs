@@ -1,0 +1,52 @@
+---
+title: "Docker Learning Track: Images, Runtime, and Security Decks"
+sidebarTitle: "Docker"
+description: "Blue Accademy's Docker track has three pre-seeded decks covering image builds, runtime configuration, Docker Compose, and container security."
+---
+
+Docker is the foundation of modern container workflows, and a firm grasp of it makes every Kubernetes concept easier to absorb. Blue Accademy's Docker track is organised into three focused decks that move from building efficient images through running and composing containers to locking them down for production use. Whether you are new to containers or refreshing knowledge ahead of a certification or code review, these decks cover the concepts and commands you will reach for every day.
+
+## Seed Decks
+
+The Docker track ships with the following three pre-seeded decks:
+
+### 1. Docker Images & Builds
+
+Dockerfile instructions, multi-stage builds, layer caching, BuildKit, base images.
+
+A container is only as good as the image it is built from. This deck teaches you how every Dockerfile instruction (`FROM`, `RUN`, `COPY`, `EXPOSE`, `ENTRYPOINT`, `CMD`, `ARG`, `ENV`, and more) contributes to the final image, how layer caching speeds up iterative builds and how to avoid accidentally busting it, how multi-stage builds dramatically reduce final image size by discarding build-time dependencies, and how BuildKit enables parallelism and secrets-safe builds.
+
+### 2. Docker Runtime & Compose
+
+Containers, volumes, networks, docker compose, health checks, resource limits.
+
+Building an image is only the first step — you also need to run it correctly. This deck covers the full container runtime model: bind mounts versus named volumes, bridge and overlay networking, port mapping, health checks, and CPU/memory resource limits. Docker Compose is covered in depth, including defining multi-service applications, controlling startup order with `depends_on` and health checks, and managing environment configuration across services.
+
+### 3. Docker Security & Registry
+
+Rootless, capabilities, scanning, signing, registries, tagging strategies.
+
+Security is not optional in container workflows. This deck addresses running containers as non-root users, dropping Linux capabilities to the minimum required, scanning images for CVEs with tools like Trivy or Docker Scout, signing images for supply-chain trust, and working with registries — authentication, pushing and pulling, and tag naming strategies that keep your registry clean and auditable.
+
+---
+
+## Sample Topics Covered
+
+The cards across these three decks include, among many others:
+
+| Topic | Topic |
+|---|---|
+| `FROM`, `RUN`, `COPY`, `EXPOSE` instructions | Multi-stage builds |
+| Layer caching strategies | BuildKit parallel builds |
+| Docker volumes and bind mounts | `docker compose` services and networking |
+| Image scanning for CVEs | Rootless containers |
+
+---
+
+## Recommended Study Order
+
+Work through the decks in sequence: **Images & Builds → Runtime & Compose → Security & Registry**. Understanding how images are constructed makes the runtime model easier to reason about, and you need both to make informed security decisions.
+
+<Tip>
+  Filter the deck list to the Docker track by clicking **Docker** in the track filter tabs on the Flashcards page. All three seed decks will appear immediately without any other content in the way.
+</Tip>

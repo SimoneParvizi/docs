@@ -1,0 +1,45 @@
+---
+title: "Pulumi Learning Track: IaC Concepts and Patterns"
+sidebarTitle: "Pulumi"
+description: "Blue Accademy's Pulumi track covers Infrastructure as Code fundamentals: projects, stacks, resources, providers, the Automation API, and CrossGuard policies."
+---
+
+Pulumi lets you define cloud infrastructure in general-purpose programming languages, bringing software engineering practices — type safety, testing, abstraction, and reuse — to Infrastructure as Code. Blue Accademy's Pulumi track is structured into two decks: the first builds your conceptual foundation, and the second moves into the advanced patterns and operational tooling that power production IaC workflows. Together they cover everything from spinning up your first stack to enforcing compliance policies with CrossGuard.
+
+## Seed Decks
+
+The Pulumi track ships with the following two pre-seeded decks:
+
+### 1. Pulumi Core Concepts
+
+Projects, stacks, resources, inputs/outputs, config, secrets, providers.
+
+This deck starts from first principles. You'll learn what a **project** is and how it maps to a language runtime, how **stacks** let you deploy the same program to multiple environments (dev, staging, prod) with independent state, and how **resources** model cloud primitives. A significant portion of the deck is dedicated to Pulumi's **inputs/outputs** system — the mechanism that handles asynchronous resource properties and dependency tracking — alongside the config and secrets system that keeps sensitive values encrypted at rest.
+
+### 2. Pulumi Patterns & Operations
+
+Component resources, automation API, testing, CrossGuard, stack references, ESC.
+
+Once you understand the core model, this deck takes you into the patterns that scale. **ComponentResource** lets you package groups of resources into reusable, self-contained modules. The **Automation API** embeds Pulumi's engine directly into application code, enabling infrastructure workflows triggered from CI pipelines or custom tooling without the CLI. **CrossGuard** adds policy-as-code enforcement so you can prevent non-compliant infrastructure from being deployed. **Stack references** wire together multi-stack architectures, and **ESC** (Environments, Secrets, and Configuration) provides a unified way to manage dynamic config across stacks.
+
+---
+
+## Sample Topics Covered
+
+The cards across these two decks include, among many others:
+
+| Topic | Topic |
+|---|---|
+| `pulumi up` / `pulumi preview` / `pulumi destroy` | Stack outputs and inter-stack references |
+| Config secrets (encrypted at rest) | `ComponentResource` for reusable modules |
+| CrossGuard policy enforcement | Automation API for programmatic deployments |
+
+---
+
+## Recommended Study Order
+
+Work through the decks in order: **Core Concepts → Patterns & Operations**. The Automation API, ComponentResource, and CrossGuard all build directly on the stack, resource, and input/output concepts from the first deck. Trying to absorb them out of order often leads to confusion about why outputs behave the way they do.
+
+<Tip>
+  Filter the deck list to the Pulumi track by clicking **Pulumi** in the track filter tabs on the Flashcards page. Both seed decks will appear immediately without any other content in the way.
+</Tip>
