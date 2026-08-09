@@ -73,7 +73,7 @@ What does kubectl get pods do?	Lists all pods in the current namespace.
 
 ## Custom separator
 
-The default field separator is a tab character (`\t`), which matches Anki's default plain-text export. If your source file uses a different separator character, the import API accepts an optional `separator` field. Refer to the API reference documentation for details on using the API directly.
+The default field separator is a tab character (`\t`), which matches Anki's default plain-text export. If your source file uses a different separator character, you can specify it by entering a single character as the custom separator when pasting content directly into the import panel.
 
 <Warning>
   If a line cannot be parsed — for example because the tab separator is missing or the line contains only one field — it is counted as an error and skipped. The import continues processing all remaining valid lines, so a single malformed line does not cancel the entire import. Review the error details in the result banner and correct any affected lines before re-importing them.

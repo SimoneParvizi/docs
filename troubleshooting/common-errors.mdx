@@ -1,5 +1,5 @@
 ---
-title: "Troubleshooting Common Blue Accademy Errors"
+title: "Diagnosing and Fixing Common Blue Accademy App Errors"
 sidebarTitle: "Common Errors"
 description: "How to diagnose and fix the most common errors in Blue Accademy, including database connection issues, import failures, and deck operation errors."
 ---
@@ -15,7 +15,7 @@ Blue Accademy runs as a three-container stack (Postgres, a FastAPI backend, and 
 > *No database connection is present, so no decks can be shown.*
 > *Start Postgres or configure a local database, then reload the Flashcards page.*
 
-**Cause:** The backend received a database `OperationalError` when trying to query Postgres. It returns an HTTP `503` response, which the frontend detects and translates into this message. This almost always means the `postgres-db` container is not running or not yet healthy.
+**Cause:** The backend could not reach Postgres and returned an error, which the frontend detected and translated into this message. This almost always means the `postgres-db` container is not running or not yet healthy.
 
 <Steps>
   <Step title="Check that all containers are running">
@@ -44,7 +44,7 @@ Blue Accademy runs as a three-container stack (Postgres, a FastAPI backend, and 
     docker compose -f infra/docker-compose.yml up
     ```
 
-    The `backend-api` service is configured with `depends_on: postgres-db: condition: service_healthy`, so it will not start until Postgres passes its health check (`pg_isready`). Wait for the health checks to pass before opening the app.
+    The `backend-api` service will not start until Postgres passes its health check (`pg_isready`). Wait for the health checks to pass before opening the app.
   </Step>
   <Step title="Reload the Flashcards page">
     Once all three containers show a healthy status, hard-refresh your browser (`Cmd+Shift+R` / `Ctrl+Shift+R`) to clear any cached error state and reload the deck list.
@@ -70,13 +70,13 @@ Blue Accademy runs as a three-container stack (Postgres, a FastAPI backend, and 
     Open the Settings panel by clicking the **⚙** icon on the Flashcards page. Confirm that `newCardsPerDay` is greater than `0`. The default is a sensible starting value; if it was accidentally set to `0`, update it and return to the deck list.
   </Step>
   <Step title="Verify the seed ran successfully">
-    The `backend-api` container runs `uv run python -m backend.app.db.seed` automatically on startup via the `post_start` hook. Check the backend logs to confirm the seed completed:
+    The backend automatically seeds initial card data on startup. Check the backend logs to confirm the seed completed without errors:
 
     ```bash
     docker compose -f infra/docker-compose.yml logs backend-api | grep -i seed
     ```
 
-    If you see no seed output or an error, restart the backend container to re-trigger the hook:
+    If you see no seed output or an error, restart the backend container to re-trigger it:
 
     ```bash
     docker compose -f infra/docker-compose.yml restart backend-api
@@ -105,7 +105,7 @@ The error count and individual error details are listed below the summary.
   <Step title="Open the import file in a text editor">
     Open your `.txt` file in an editor that can display invisible characters (VS Code, Sublime Text, or `cat -A` in a terminal). Every valid card line should look like:
 
-    ```
+    ```text
     What is a Kubernetes Pod?[TAB]The smallest deployable unit, containing one or more containers.
     ```
 
@@ -167,10 +167,6 @@ The error count and individual error details are listed below the summary.
 
 > *Could not rename deck*
 > *Could not update deck tag*
-
-In some cases the deck tag error message is more specific:
-
-> *Deck tag update route is not available yet. Restart npm run dev.*
 
 **Cause:** The API call to the rename or tag-update endpoint failed. This typically happens when the frontend version is newer than the running backend (or vice versa), causing a route mismatch. It can also occur after a partial container restart where only one service was updated.
 

@@ -12,12 +12,13 @@ Decks organize cards by subject area. When you open a deck and start studying, t
 
 ## Card states
 
-Every card moves through three states as you study it.
+Every card moves through four states as you study it.
 
 | State | Meaning |
 |---|---|
 | **New** | You have never reviewed this card. It enters the queue subject to your daily new-card limit. Cards in this state have a blue border during study. |
-| **Learning** | The card is in its early step progression. It reappears in the same session or the next day, following your configured learning steps, until it graduates to Review. Cards in this state have a red border. |
+| **Learn** | The card is in its early step progression. It reappears in the same session or the next day, following your configured learning steps, until it graduates to Review. Cards in this state have a red border. |
+| **Relearn** | The card was previously in Review but was rated Blackout. It works through the relearning steps before returning to the Review state. Cards in this state also have a red border. |
 | **Review** | The card has graduated to long-term retention. The scheduler spaces reviews over days, weeks, or months based on your rating history. Cards in this state have a green border. |
 
 ## Rating scale

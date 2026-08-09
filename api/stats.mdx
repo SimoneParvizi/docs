@@ -1,5 +1,5 @@
 ---
-title: "Stats API: Overall and Per-Deck Study Progress"
+title: "Stats API: Track Overall and Per-Deck Study Progress"
 sidebarTitle: "Stats"
 description: "GET /api/v1/stats returns your overall study progress across all decks. GET /api/v1/decks/{id}/stats returns stats for a single deck."
 ---
@@ -86,15 +86,15 @@ curl http://localhost:8000/api/v1/decks/1/stats
 </ResponseField>
 
 <ResponseField name="newAvailable" type="integer" required>
-  Also returned as `new_left_today`. The number of new (never-seen) cards remaining for today in this deck, capped by the `newCardsPerDay` scheduler setting. Once this reaches `0`, no more new cards are introduced until tomorrow.
+  The number of new (never-seen) cards remaining for today in this deck, capped by the `newCardsPerDay` scheduler setting. Once this reaches `0`, no more new cards are introduced until tomorrow.
 </ResponseField>
 
 <ResponseField name="learnDue" type="integer" required>
-  Also returned as `due_progress_learn`. The number of cards currently in the **Learning** or **Relearning** state that are due to be shown now.
+  The number of cards currently in the **Learning** or **Relearning** state that are due to be shown now.
 </ResponseField>
 
 <ResponseField name="reviewDue" type="integer" required>
-  Also returned as `due_progress_review`. The number of cards in the long-term **Review** state that are due today.
+  The number of cards in the long-term **Review** state that are due today.
 </ResponseField>
 
 <ResponseField name="seenCount" type="integer" required>

@@ -1,5 +1,5 @@
 ---
-title: "Run Blue Accademy Locally with Docker Compose"
+title: "Run the Blue Accademy Stack Locally with Docker Compose"
 sidebarTitle: "Local Setup"
 description: "Step-by-step instructions to run the Blue Accademy stack locally using Docker Compose, including environment configuration and database seeding."
 ---
@@ -46,13 +46,7 @@ The backend waits for Postgres to pass its health check before starting, and the
   </Step>
 
   <Step title="Wait for health checks and database seeding">
-    Docker Compose runs health checks on each service before the dependent service starts. Watch the log output in your terminal — once the backend is healthy, it automatically runs the database seed script:
-
-    ```
-    uv run python -m backend.app.db.seed
-    ```
-
-    When the seed completes successfully, you'll see confirmation in the backend container logs. The frontend container will start immediately after and become available in your browser.
+    Docker Compose runs health checks on each service before the dependent service starts. Watch the log output in your terminal — once the backend is healthy, the database is seeded automatically with the starter decks. When seeding completes, you'll see confirmation in the backend container logs. The frontend container will start immediately after and become available in your browser.
   </Step>
 
   <Step title="Open the app">
