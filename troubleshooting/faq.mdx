@@ -1,124 +1,57 @@
 ---
-title: "Blue Accademy FAQ: Flashcards, Decks, and Scheduling"
+title: "FAQ"
 sidebarTitle: "FAQ"
-description: "Answers to common questions about Blue Accademy flashcards, deck management, study scheduling, Anki import, learning tracks, and review intervals."
+description: "Answers to common questions about the current BlueAccademy docs and flashcards slice."
 ---
 
-Blue Accademy is an open-source spaced-repetition learning platform focused on Kubernetes, Docker, and Pulumi. Whether you're unsure why cards aren't appearing, want to understand how the scheduling algorithm works, or need help with deck imports, the answers below cover the most common questions from new and returning learners.
+This FAQ focuses on the current supported flashcards slice and the current local runtime model.
 
 <AccordionGroup>
 
 <Accordion title="Why aren't my new cards appearing?">
-  New cards are gated by the **New Cards Per Day** setting (`newCardsPerDay`). If this value is set to `0`, or if you have already seen the maximum number of new cards for today, no additional new cards will be presented in the current session.
+  Common reasons are:
 
-  To adjust this limit, open the Settings panel (⚙) from the deck list and increase `newCardsPerDay` to a value greater than `0`. Changes take effect immediately for the next session. Remember that new cards are separate from cards that are already in the learning or review queues — those will still appear today even if you've hit your new-card quota.
+  - `newCardsPerDay` is `0`
+  - you already reached today's new-card limit
+  - the database has not been seeded as expected
 </Accordion>
 
 <Accordion title="Can I undo a review rating?">
-  Yes. Blue Accademy supports single-step undo for the most recent review. You can trigger it in two ways:
-
-  - **Keyboard shortcut:** Press `Cmd+Z` (macOS) or `Ctrl+Z` (Windows/Linux) while a card is on screen.
-  - **Button:** Click the **↺** (undo) button in the study toolbar above the card.
-
-  Undo is only available for the immediately preceding review. Once you rate a second card, the previous undo opportunity is gone. The ↺ button is disabled (greyed out) when there is nothing to undo, or while another review action is already in progress.
+  Yes. The current flashcard flow supports undo for the most recent review.
 </Accordion>
 
 <Accordion title="What do the card border colors mean?">
-  The colored border on a flashcard tells you which scheduling queue it belongs to:
+  They map to scheduler state:
 
   | Border color | Queue | Meaning |
   |---|---|---|
-  | 🔵 Blue | New | This card has never been reviewed before. |
-  | 🔴 Red | Learning / Relearning | This card is in an early learning step, or was missed and is being relearned. |
-  | 🟢 Green | Due for review | This card has graduated from learning and is scheduled for a regular spaced-repetition review. |
-
-  Cards with no distinctive border have an indeterminate state, usually seen briefly during loading.
+  | 🔵 | New | This card has never been reviewed before. |
+  | 🔴 | Learning / Relearning | This card is in an early learning step, or was missed and is being relearned. |
+  | 🟢 | Due for review | This card has graduated from learning and is scheduled for a regular spaced-repetition review. |
 </Accordion>
 
 <Accordion title="How do I import my Anki cards?">
-  You can bulk-import cards from Anki (or any compatible flashcard app) using a plain-text export:
-
-  1. Export your Anki deck as a **tab-separated `.txt` file** — each line should have the front text, a single tab character, and the back text.
-  2. In Blue Accademy, open the **Flashcards** page and click the **↑ import** button in the deck list header.
-  3. Select the target deck and choose your `.txt` file.
-  4. Review the import summary — it shows the number of cards successfully imported and any lines that could not be parsed.
-
-  <Tip>
-    Lines starting with `#` are treated as comments and are silently skipped, as are completely blank lines. Only lines that cannot be parsed as `front\tback` are counted as errors.
-  </Tip>
+  Export plain-text tab-separated content from Anki, then import that into the flashcards slice. The supported path documented here is `.txt` import.
 </Accordion>
 
 <Accordion title="What happens if I delete a deck?">
-  Deleting a deck is a **permanent, irreversible action**. It removes:
-
-  - The deck itself and its metadata (title, description, track).
-  - Every flashcard that belongs to the deck.
-  - All review history and scheduling progress for those cards.
-
-  <Warning>
-    There is no recycle bin or soft-delete. If you want to keep the cards, export them before deleting the deck.
-  </Warning>
-
-  To delete a deck, open the deck's context menu (the three-dot or action icon in the deck list row) and choose **Delete**.
+  Deck deletion is permanent. It removes the deck, its cards, and related progress state.
 </Accordion>
 
 <Accordion title="Can I create my own decks?">
-  Yes. Click the **folder+** (new deck) icon in the deck list header to open the deck creation panel. You'll be prompted to fill in:
-
-  - **Title** — a short, descriptive name for the deck.
-  - **Description** — optional context about what the deck covers.
-  - **Track** — the learning category the deck belongs to (see the next FAQ item for details).
-
-  Once created, the deck appears in the list immediately and you can start adding cards to it.
-</Accordion>
-
-<Accordion title="What are learning tracks?">
-  Tracks are tags that categorize decks by subject area. Blue Accademy currently supports four tracks:
-
-  | Track | Description |
-  |---|---|
-  | `kubernetes` | Core Kubernetes concepts, workloads, networking, and certification prep. |
-  | `docker` | Docker images, containers, Compose, and container runtime fundamentals. |
-  | `pulumi` | Infrastructure-as-code with Pulumi across multiple cloud providers. |
-  | `azure` | Microsoft Azure services and cloud architecture patterns. |
-
-  You can filter the deck list to show only decks from a specific track using the filter tabs at the top of the Flashcards page. Each track has its own distinct color badge to make decks easy to identify at a glance.
+  Yes. You can create your own decks and add your own cards. Track tags are organizational metadata.
 </Accordion>
 
 <Accordion title="What does 'All caught up!' mean?">
-  The **"All caught up!"** message appears when there are no cards due in any queue — new, learning, or review — for today's session. This is the goal of consistent daily study.
-
-  Your options at this point are:
-
-  - **Come back tomorrow.** The scheduler will have cards ready based on the intervals calculated from your last ratings.
-  - **Increase `newCardsPerDay`.** If you want more volume, raise this setting in the Settings panel (⚙) to introduce more new cards each day.
-
-  <Info>
-    Seeing "All caught up!" every day means your retention intervals are healthy. Avoid artificially forcing more cards — the spaced-repetition benefit comes from reviewing at the right time, not reviewing more often.
-  </Info>
+  It means there are no cards currently due under the scheduler rules for that deck and that moment.
 </Accordion>
 
 <Accordion title="How is the next review interval calculated?">
-  Blue Accademy uses an **SM-2-style spaced repetition algorithm**. After each review, the scheduler adjusts the card's *ease factor* and calculates the next interval based on the rating you gave:
-
-  | Rating | Effect |
-  |---|---|
-  | **Easy** (3) | Increases the ease factor and applies a large interval multiplier. The card returns much later. |
-  | **Good** (2) | Applies the standard interval multiplier. The card returns at the normal scheduled time. |
-  | **Hard** (1) | Slightly reduces the ease factor and shortens the interval. The card returns sooner. |
-  | **Blackout** (0) | Resets the card back into the learning queue. The ease factor is reduced as a penalty. |
-
-  The interval preview shown under each rating button during a review gives you a real-time estimate of when the card will next appear, so you can make an informed choice.
-
-  <Tip>
-    Aim for mostly **Good** ratings. Chasing **Easy** on cards you only half-know tends to push them out too far, leading to forgotten material later.
-  </Tip>
+  The flashcard system uses an SM-2-style scheduling approach. Ratings change the next interval and may also move a card between new, learning, relearning, and review states.
 </Accordion>
 
-<Accordion title="Is there a CKAD exam simulator?">
-  Not yet. CKAD (Certified Kubernetes Application Developer) simulation, interactive terminal exercises, and an in-app chat assistant are not available in the current release.
-
-  Watch the [GitHub repository](https://github.com/SimoneParvizi/blueaccademy) for release notes as these features become available.
+<Accordion title="Is there a supported CKAD simulator or hosted sandbox?">
+  Not yet. Those areas are not documented as supported in the current release.
 </Accordion>
 
 </AccordionGroup>

@@ -1,0 +1,27 @@
+#navbar {
+  min-height: 12rem !important;
+  overflow: visible !important;
+}
+
+#navbar nav-logo,
+#navbar a:has(img[src*="namelogo"]),
+#navbar a:has(img[src*="logo"]) {
+  display: flex !important;
+  align-items: center !important;
+  transform: scale(3) !important;
+  transform-origin: left center !important;
+  margin-left: 2rem !important;
+  margin-right: 6rem !important;
+}
+
+#navbar nav-logo img,
+#navbar img[src*="namelogo"],
+#navbar img[src*="logo"],
+#navbar nav-logo svg,
+#navbar svg {
+  height: 9rem !important;
+  width: auto !important;
+  max-height: none !important;
+  max-width: none !important;
+  object-fit: contain !important;
+}

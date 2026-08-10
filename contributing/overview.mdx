@@ -1,0 +1,56 @@
+---
+title: "Contributing"
+sidebarTitle: "Overview"
+description: "Contributor guidance for BlueAccademy and its docs."
+---
+
+Contributions should improve the current supported product without overstating what is ready.
+
+## Contributor bootstrap order
+
+Use [Local Setup](/running-locally) as the source of truth for the contributor bootstrap order and the preferred local runtime flow.
+
+## Ground rules
+
+- Prefer accuracy over promotional language
+- Keep docs aligned with the current `blueaccademy` repo state
+- Do not document in-progress areas as if they are stable
+- Avoid broad speculative additions
+
+## When contributing to the product docs
+
+Use the main repo `README.md` as a lightweight status summary and use this docs site as the deeper reference.
+
+Good additions include:
+
+- Better local setup instructions
+- Better flashcard behavior docs
+- Clearer architecture explanations
+- Better contributor and troubleshooting docs
+
+## When contributing to the product code
+
+Check whether the work lands in the current supported slice:
+
+- Flashcards work is in scope
+- Guided terminal work may be in scope if it matches the current migration direction
+- Unsupported areas should not be documented as available just because code exists
+
+## Current contributor toolchain
+
+The Python toolchain currently comes from:
+
+- `pyproject.toml`
+- `uv.lock`
+- `.pre-commit-config.yaml`
+
+The current Git hooks run repo-local commands through `uv run`, including:
+
+- `ty`
+- `ruff check --fix`
+- `ruff format`
+- `pytest`
+
+## Before opening a docs PR
+
+Verify your source of truth, distinguish current behavior from inferred intent, and prefer claims that will remain accurate if the code changes next week.

@@ -1,29 +1,38 @@
 ---
-title: "Flashcards: Spaced-Repetition Study for DevOps Topics"
-sidebarTitle: "Overview"
-description: "Learn how Blue Accademy's flashcard system works, from pre-seeded decks to the spaced-repetition scheduler that surfaces cards at the right time."
+title: "Flashcards overview"
+sidebarTitle: "Flashcards Overview"
+description: "Understand the current supported flashcard workflow and backend model."
 ---
 
-Blue Accademy's flashcard system gives you a structured way to build lasting knowledge of Kubernetes, Docker, and Pulumi. Cards are grouped into topic-focused decks, and a built-in spaced-repetition scheduler ensures you review each card at exactly the right moment — surfacing it just before you would forget it, and pushing the next review further out each time you recall it successfully.
+The flashcard system is the stable, supported slice of BlueAccademy today.
+
+It gives you a structured way to work with decks, cards, review history, and scheduler-backed intervals. Starter content is seeded from the repository, and you can extend it with your own decks and cards.
 
 ## How it works
 
-Decks organize cards by subject area. When you open a deck and start studying, the scheduler builds a queue of cards that are currently due — a mix of brand-new cards you have never seen, cards still working through their early learning steps, and older cards returning for a long-term review. You see the question side of a card first. When you are ready, you flip the card to reveal the answer. After reading the answer you rate how well you recalled it. The scheduler uses that rating to calculate when to show the card next: a poor rating brings it back very soon; a strong rating pushes it further out.
+At a high level:
+
+1. Decks group related cards.
+2. The backend determines which cards are due.
+3. You flip a card and rate recall.
+4. The scheduler writes the new progress state and next interval.
+
+The implementation is currently backed by the Python/FastAPI backend in `backend/app/services/flashcards/`.
 
 ## Card states
 
-Every card moves through four states as you study it.
+Cards move through four scheduler states:
 
 | State | Meaning |
 |---|---|
-| **New** | You have never reviewed this card. It enters the queue subject to your daily new-card limit. Cards in this state have a blue border during study. |
-| **Learn** | The card is in its early step progression. It reappears in the same session or the next day, following your configured learning steps, until it graduates to Review. Cards in this state have a red border. |
-| **Relearn** | The card was previously in Review but was rated Blackout. It works through the relearning steps before returning to the Review state. Cards in this state also have a red border. |
-| **Review** | The card has graduated to long-term retention. The scheduler spaces reviews over days, weeks, or months based on your rating history. Cards in this state have a green border. |
+| **New** | Card has not been reviewed yet. |
+| **Learn** | Card is moving through initial learning steps. |
+| **Relearn** | Card was forgotten from review and is being learned again. |
+| **Review** | Card has graduated to longer-term spaced repetition. |
 
 ## Rating scale
 
-After you flip a card, four rating buttons appear. Each rating affects how soon the card returns.
+After you flip a card, you choose one of four ratings:
 
 | Rating | Value | What it means | Effect on interval |
 |---|---|---|---|
@@ -32,24 +41,39 @@ After you flip a card, four rating buttons appear. Each rating affects how soon 
 | **Good** | 2 | Correct with effort — the expected result | Card advances to the next learning step, or the interval grows at the standard rate |
 | **Easy** | 3 | Instant recall — no hesitation at all | Card jumps ahead to your configured easy review interval, skipping remaining learning steps |
 
-The exact number of days until next review is shown in small text beneath each rating button, so you can see the consequence of your choice before you tap.
+## Seeded content
+
+Starter content is seeded from the main product repo:
+
+- `backend/app/db/learning_content/decks.json`
+- `backend/app/db/learning_content/cards.json`
+
+Other learning-content files exist in the repo for in-progress areas, but only the current flashcard slice should be treated as supported.
+
+## Boundaries
+
+Do not read this section as a promise about the rest of the platform.
+
+- Flashcards are supported now.
+- Guided terminal exercises are in progress.
+- CKAD simulations, end-to-end labs, chat, and hosted sandboxes are not yet supported.
 
 ## Where to go next
 
 <CardGroup cols={2}>
   <Card title="Study Flow" icon="play" href="/flashcards/study-flow">
-    Walk through a study session step by step — flipping cards, rating recall, undoing reviews, and editing cards mid-session.
+    Walk through the supported review loop and the main session behaviors.
   </Card>
   <Card title="Decks" icon="layer-group" href="/flashcards/decks">
-    Browse the nine pre-seeded decks, create your own, rename or delete decks, and filter by learning track.
+    Learn how seeded decks, custom decks, track tags, and deck operations work.
   </Card>
   <Card title="Custom Cards" icon="pen-to-square" href="/flashcards/custom-cards">
-    Add your own flashcards to any deck with a front, back, and optional code snippet.
+    Add or edit cards without changing the overall runtime assumptions.
   </Card>
   <Card title="Anki Import" icon="file-import" href="/flashcards/anki-import">
-    Import existing card collections from Anki's tab-separated text export format.
+    Import plain-text Anki exports into the current flashcard system.
   </Card>
   <Card title="Settings" icon="gear" href="/flashcards/settings">
-    Tune daily new-card limits, learning steps, relearning steps, and minimum review intervals.
+    Adjust the scheduler pacing and default intervals.
   </Card>
 </CardGroup>

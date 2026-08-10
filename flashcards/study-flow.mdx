@@ -1,34 +1,32 @@
 ---
-title: "How the Flashcard Study Flow Works in Blue Accademy"
+title: "Flashcard study flow"
 sidebarTitle: "Study Flow"
-description: "Understand the step-by-step study session experience: flipping cards, rating recall, the undo feature, and what happens when your session is complete."
+description: "Understand the current BlueAccademy flashcard review loop."
 ---
 
-Every study session in Blue Accademy follows a simple loop: you see a question, flip the card to reveal the answer, rate your recall, and the scheduler queues the next card. The session ends automatically when every due card in the deck has been reviewed. This page walks through each part of that experience and explains the extra controls available to you during a session.
+Every flashcard session follows the same core loop: load due cards, flip a card, rate recall, then move to the next scheduled item.
 
 ## Step-by-step session walkthrough
 
 <Steps>
   <Step title="Select a deck">
-    From the Flashcards page, click any row in the deck list to begin studying that deck. The row shows **New**, **Learn**, and **Due** counts so you can see what is waiting before you start.
+    Open a deck from the flashcards list.
   </Step>
 
   <Step title="The card queue loads">
-    Blue Accademy fetches all cards that are due in that deck and builds a session queue. The card's border color tells you which queue it came from at a glance:
+    The backend builds the queue from cards due in that deck:
 
     - **Blue border** — New card (never studied before)
     - **Red border** — Learning or Relearning card (progressing through learning or relearning steps)
     - **Green border** — Due card (returning for a long-term review)
-
-    The progress indicator in the top-right corner shows your position in the queue, for example `1 / 14`.
   </Step>
 
   <Step title="Read the question and flip the card">
-    The question (front of the card) is displayed in the center of the card area. Click anywhere on the card to reveal the answer. If the card has a code example attached, it appears below the answer text in a monospace block.
+    Read the front of the card, then flip to reveal the answer. If the card includes a code example, it is shown with the answer.
   </Step>
 
   <Step title="Rate your recall">
-    Once the card is flipped, four rating buttons appear below it:
+    Choose the rating that best matches your recall:
 
     | Button | When to use it |
     |---|---|
@@ -36,40 +34,29 @@ Every study session in Blue Accademy follows a simple loop: you see a question, 
     | **Hard** | You remembered, but it took significant effort |
     | **Good** | Correct recall with normal effort |
     | **Easy** | Instant, effortless recall |
-
-    A small interval preview under each button label shows exactly how long until that card returns if you choose that rating. Use it to calibrate your choice.
   </Step>
 
   <Step title="The scheduler updates and loads the next card">
-    After you tap a rating, the scheduler records your response and advances to the next card in the queue. New and Learning cards may reappear later in the same session if their next step is due within the session window.
+    The backend records the rating, updates progress, calculates the next interval, and advances the queue.
   </Step>
 
   <Step title="Session ends when the queue is empty">
-    When every card in the queue has been reviewed, the session ends and you see **"All caught up!"** with a button to return to the deck list. Cards you rated Blackout during the session re-enter their relearning steps and will appear in future sessions.
+    When there are no more due cards in that queue, the session ends.
   </Step>
 </Steps>
 
 ## Undoing the last review
 
-If you rate a card by mistake, you can undo the last review before moving on.
+If you rate a card by mistake, you can undo the most recent review.
 
 - **Keyboard shortcut:** Press `Cmd+Z` on macOS or `Ctrl+Z` on Windows and Linux.
-- **Toolbar button:** Click the ↺ (undo) icon in the top-left toolbar of the study view.
 
-Undo restores the card's previous progress state and places it back at its original position in the queue. Only the **most recent** review can be undone — once you rate a second card, the earlier undo is no longer available.
+Undo restores the previous progress state for that card. Only the latest review is undoable.
 
-## Editing a card mid-session
+## Practical edge case
 
-You can correct or improve a card without leaving study mode. Click the **pencil icon** (✎) in the top-right corner of the card to open the inline editor. You can update the front (question), back (answer), and code example. Click **Save** to apply changes immediately. The card's review progress and scheduling history are not affected by content edits.
+If you see "all caught up" immediately, do not assume the deck is empty. More common causes are:
 
-## Discarding a card
-
-To permanently remove the current card from the deck, click the **trash icon** in the toolbar. A confirmation dialog appears — click **Discard** to confirm. If the discarded card was a New card, another new card (if one is available in the deck) loads in its place. This action cannot be undone.
-
-## Progress bar
-
-The progress indicator in the top-right corner of the study view displays your current position in the session queue as `current / total`. A thin progress bar fills from left to right as you work through the queue, giving you a quick visual sense of how far along you are.
-
-<Tip>
-  The interval preview on each rating button shows exactly how long until the card appears again — use it to make more informed ratings. Choosing **Good** consistently will naturally space cards to an appropriate interval for your pace.
-</Tip>
+- No cards are due yet
+- Your new-card limit has already been reached
+- The seed step has not populated the database as expected

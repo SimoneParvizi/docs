@@ -1,0 +1,158 @@
+---
+title: "Install developer tooling"
+sidebarTitle: "Developer Tooling"
+description: "Install uv, Python, and pre-commit for BlueAccademy development."
+---
+
+This page covers the developer tooling required for `~/blueaccademy`.
+
+Use this page together with [Install Rancher Desktop](/installation/rancher-desktop).
+
+## What this repo expects
+
+The current source of truth in `blueaccademy` is:
+
+- `pyproject.toml` requires Python `>=3.11`
+- `uv.lock` is present
+- `.pre-commit-config.yaml` runs hooks through `uv run ...`
+
+That means the practical toolchain for contributors is:
+
+- `uv`
+- Python 3.11 or newer
+- `pre-commit`
+
+## Official references
+
+- [uv installation docs](https://docs.astral.sh/uv/getting-started/installation/)
+- [pre-commit docs](https://pre-commit.com/)
+
+## Install `uv`
+
+### macOS and Linux
+
+The official standalone installer is:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+If you prefer Homebrew on macOS:
+
+```bash
+brew install uv
+```
+
+### Windows
+
+The official standalone installer is:
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+If you prefer WinGet:
+
+```powershell
+winget install --id=astral-sh.uv -e
+```
+
+### Verify `uv`
+
+After installation, open a fresh terminal and run:
+
+```bash
+uv --version
+```
+
+If this fails, do not continue to repository setup yet. Fix your `PATH` first.
+
+## Install Python through `uv`
+
+The repo requires Python `>=3.11`.
+
+If your machine does not already have a suitable Python version available, install one with `uv`:
+
+```bash
+uv python install 3.11
+```
+
+You can verify the interpreter resolution with:
+
+```bash
+uv python list
+```
+
+If you already have a working Python 3.11+ installation, `uv` can use it.
+
+## Clone the main repository
+
+If the repo is not already on disk:
+
+```bash
+git clone https://github.com/SimoneParvizi/blueaccademy.git ~/blueaccademy
+cd ~/blueaccademy
+```
+
+If it is already cloned, just move into it:
+
+```bash
+cd ~/blueaccademy
+```
+
+## Sync project dependencies
+
+For contributor setup, sync the locked dependencies including the development group:
+
+```bash
+uv sync --dev
+```
+
+This is the correct bootstrap step for this repository because:
+
+- the lockfile is present
+- development tools are declared in `pyproject.toml`
+- the git hooks call those tools through `uv run`
+
+## Install `pre-commit`
+
+There are two separate things people confuse here:
+
+1. the `pre-commit` Python package
+2. the Git hook installation for this repository
+
+In this repo, the package is already handled by `uv sync --dev`.
+
+The next step is to install the Git hooks into the repository:
+
+```bash
+uv run pre-commit install
+```
+
+Verify that `pre-commit` is available:
+
+```bash
+uv run pre-commit --version
+```
+
+Then run the full hook set once:
+
+```bash
+uv run pre-commit run --all-files
+```
+
+That first run may take time because hook environments are initialized on first execution.
+
+## What the current hooks run
+
+The repo's `.pre-commit-config.yaml` currently runs:
+
+- trailing whitespace checks
+- YAML validation
+- branch protection against direct commits to `main`
+- `uv run ty check`
+- `uv run ruff check --fix`
+- `uv run ruff format`
+- `uv run pytest`
+
+This is why documenting `pre-commit` without documenting `uv` would be incomplete.

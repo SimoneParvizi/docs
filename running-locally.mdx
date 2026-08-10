@@ -1,107 +1,161 @@
 ---
-title: "Run the Blue Accademy Stack Locally with Docker Compose"
+title: "Run BlueAccademy locally"
 sidebarTitle: "Local Setup"
-description: "Step-by-step instructions to run the Blue Accademy stack locally using Docker Compose, including environment configuration and database seeding."
+description: "Detailed local setup instructions for the current BlueAccademy runtime in the main product repository, starting with Rancher Desktop."
 ---
 
-This page covers everything you need to run the full Blue Accademy stack on your own machine. You'll find details on prerequisites, the services that make up the architecture, environment variable configuration, database seeding, and how to stop or reset the stack without losing your study data.
+This page covers the current local development runtime in `blueaccademy`. The docs repository itself does not run the app. It only serves this Mintlify site.
+
+The preferred first step is now [Install Rancher Desktop](/installation/rancher-desktop).
+If you are contributing code, the second step is [Install developer tooling](/installation/developer-tooling).
 
 ## Prerequisites
 
-Make sure your machine meets these requirements before starting:
+Make sure you have:
 
-- **Docker 24 or later** — [Install Docker](https://docs.docker.com/get-docker/)
-- **Docker Compose v2** — bundled with Docker Desktop; available separately for Linux via the [Compose plugin](https://docs.docker.com/compose/install/linux/)
-
-## Architecture overview
-
-The Blue Accademy stack runs as three services coordinated by Docker Compose:
-
-| Service | Port | Role |
-|---------|------|------|
-| `postgres-db` | `5432` | Stores all decks, cards, and review history in a Postgres database |
-| `backend-api` | `8000` | FastAPI application that serves the REST API and runs the spaced-repetition scheduler |
-| `frontend` | `5173` | React/Vite app that provides the study interface you interact with in the browser |
-
-The backend waits for Postgres to pass its health check before starting, and the frontend waits for the backend to pass its health check before it starts. This ordering ensures the database is ready and seeded before you open the app.
+- Rancher Desktop installed
+- Rancher Desktop running
+- Kubernetes enabled in Rancher Desktop
+- `uv` installed
+- Python 3.11+ available to `uv`
+- repo dependencies synced with `uv sync --dev`
+- Git hooks installed with `uv run pre-commit install`
+- A clone of `blueaccademy`
 
 ## Setup
 
 <Steps>
-  <Step title="Clone the repository">
-    Clone the Blue Accademy repository and navigate into the project directory.
+  <Step title="Start Rancher Desktop first">
+    Launch Rancher Desktop and wait for it to finish initialization before you start the BlueAccademy stack.
+  </Step>
+
+  <Step title="Prepare the contributor toolchain">
+    From `~/blueaccademy`, run:
 
     ```bash
-    git clone https://github.com/SimoneParvizi/blueaccademy.git
-    cd blueaccademy
+    uv sync --dev
+    uv run pre-commit install
+    ```
+  </Step>
+
+  <Step title="Open the product repo">
+    Move into the main repo:
+
+    ```bash
+    cd ~/blueaccademy
     ```
   </Step>
 
   <Step title="Start the stack">
-    Build the images and start all three services. The `--build` flag ensures you always use a fresh image based on the current source.
+    Build and start the services:
 
     ```bash
     docker compose -f infra/docker-compose.yml up --build
     ```
   </Step>
 
-  <Step title="Wait for health checks and database seeding">
-    Docker Compose runs health checks on each service before the dependent service starts. Watch the log output in your terminal — once the backend is healthy, the database is seeded automatically with the starter decks. When seeding completes, you'll see confirmation in the backend container logs. The frontend container will start immediately after and become available in your browser.
+  <Step title="Wait for health and seed completion">
+    On startup, the backend runs `python -m backend.app.db.seed` as a post-start command. That seed step loads starter content from `backend/app/db/learning_content/`.
   </Step>
 
   <Step title="Open the app">
-    With all three services running and healthy, open your browser and navigate to:
+    Open:
 
     ```
     http://localhost:5173
     ```
 
-    Click **Flashcards** in the navigation to reach your deck library and begin studying.
+    Use the flashcards slice from there.
   </Step>
 </Steps>
 
+## Architecture overview
+
+The current local stack runs three services:
+
+| Service | Port | Role |
+|---------|------|------|
+| `postgres-db` | `5432` | Persistent storage for decks, cards, settings, and review state |
+| `backend-api` | `8000` | FastAPI application for the current supported flashcard slice |
+| `frontend` | `5173` | Frontend application you open in the browser |
+
+The Compose file waits for Postgres health before starting the backend and waits for backend health before starting the frontend.
+
 ## Environment variables
 
-The backend reads its database connection from a single environment variable:
+The current Compose file sets these key variables:
 
 | Variable | Description |
 |----------|-------------|
-| `DATABASE_URL` | Full connection string used by the FastAPI backend to connect to Postgres |
+| `DATABASE_URL` | Backend connection string for Postgres |
+| `VITE_PYTHON_API_BASE_URL` | Frontend base URL for the Python backend |
 
-The default value set in `infra/docker-compose.yml` is:
+Current defaults:
 
 ```bash
 DATABASE_URL=postgresql+psycopg://blueaccademy:mypassword@host.docker.internal:5432/blueaccademy
+VITE_PYTHON_API_BASE_URL=http://localhost:8000
 ```
-
-The connection string follows the format:
-
-```
-postgresql+psycopg://<user>:<password>@<host>:<port>/<dbname>
-```
-
-If you change the Postgres credentials in the Compose file, update `DATABASE_URL` to match.
 
 <Warning>
-  The default Compose configuration is intended for local development only. The Postgres password is set to a well-known default value (`mypassword`). Change this password before exposing the stack to any shared or external network.
+  The default Compose setup is for local development only.
 </Warning>
+
+## Useful contributor commands
+
+From `~/blueaccademy`, these are the preferred commands to know:
+
+- `cd infra && docker compose up --build`: preferred local runtime for Postgres, backend API, and frontend
+- `docker build -t blueaccademy-api:test . -f infra/api.Dockerfile`: build backend image manually
+- `docker build -t blueaccademy-frontend:test . -f infra/frontend.Dockerfile`: build frontend image manually
+- `cd frontend && npm run dev`: run Vite locally without Docker
+- `cd frontend && npm run build`: build the frontend bundle
+- `uv run python -m backend.app.db.seed`: seed backend data locally
+
+## Seeds
+
+Repo-managed starter content lives in:
+
+- `backend/app/db/learning_content/cards.json`
+- `backend/app/db/learning_content/terminal-exercises.json`
+- `backend/app/db/learning_content/ckad-exercises.json`
+- `backend/app/db/learning_content/real-env-exercises.json`
 
 ## Stopping and restarting
 
-To stop all running containers without removing your data, use:
+To stop the stack:
 
 ```bash
 docker compose -f infra/docker-compose.yml down
 ```
 
-Your study history, decks, and cards persist across `down`/`up` cycles because Postgres stores its data in a volume mounted at `~/postgres/blueaccademy` on your host machine. When you run `up` again, the database is already populated and the seed step skips any content that already exists.
+Data persists because Postgres writes to `~/postgres/blueaccademy` on the host.
 
 ## Resetting to a clean state
 
-If you want to wipe all data and start fresh — for example, to re-run the initial seed from scratch — stop the stack and remove the named volume at the same time:
+If you want a clean database:
 
 ```bash
 docker compose -f infra/docker-compose.yml down -v
 ```
 
-This removes the Postgres volume along with the containers. The next `up` will re-seed the database from the repo-managed starter content as if it were a first boot.
+Then start the stack again. The next boot re-runs the seed step.
+
+## What not to assume
+
+Local runtime availability does not imply public support for every route or page in the codebase.
+
+- The flashcards slice is the supported workflow today.
+- Guided terminal exercises are in progress.
+- CKAD simulations, broader real-environment labs, chat, and hosted sandbox orchestration are not yet documented as supported.
+
+## If Rancher Desktop is your first Kubernetes runtime
+
+Verify these before debugging BlueAccademy itself:
+
+```bash
+kubectl version --client
+helm version
+```
+
+If those commands do not work yet, fix your Rancher Desktop installation first.

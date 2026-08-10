@@ -1,80 +1,59 @@
 ---
-title: "Import Anki Decks into Blue Accademy"
+title: "Import Anki content"
 sidebarTitle: "Anki Import"
-description: "Import flashcards from Anki's tab-separated export format into any Blue Accademy deck by pasting content or uploading a .txt file."
+description: "Import plain-text Anki exports into BlueAccademy flashcard decks."
 ---
 
-If you already have a library of flashcards in Anki, you do not need to recreate them by hand. Blue Accademy can import cards directly from Anki's plain-text export format. You can import into an existing deck or have Blue Accademy create a new deck during the import — all from a single panel without leaving the Flashcards page.
+If you already maintain cards in Anki, you can reuse that content instead of rebuilding it by hand.
 
 ## What you can import
 
-Blue Accademy accepts Anki's **tab-separated text export** format. Each line in the file represents one card, with the front (question) and back (answer) separated by a tab character. Comment lines starting with `#` are skipped, as are blank lines.
+The current import path is Anki plain-text export, not `.apkg`.
+
+Each line should contain:
+
+- Front text
+- One tab character
+- Back text
+
+Comment lines starting with `#` and blank lines are skipped.
 
 ```text
 # This is a comment — it will be ignored
-What is a Pod?	Smallest deployable unit in Kubernetes. Wraps one or more containers.
-What is a Deployment?	Manages ReplicaSets to maintain desired Pod count. Supports rolling updates.
+Question one	Answer one
+Question two	Answer two
 ```
 
 ## How to export from Anki
 
 1. In the Anki desktop app, go to **File → Export**.
 2. Set the export format to **Notes in Plain Text (.txt)**.
-3. Uncheck **Include HTML and media references** if you want clean, readable text without HTML tags.
-4. Choose the deck or note type you want to export.
-5. Click **Export** and save the `.txt` file to your computer.
+3. Choose the deck or note type you want to export.
+4. Export the file.
 
 ## Import steps
 
 <Steps>
-  <Step title="Open the Import panel">
-    Click the **upload icon** (↑) in the deck list header to open the Anki Import panel.
+  <Step title="Choose the target deck">
+    Import into an existing deck or create a new deck as part of the import flow.
   </Step>
 
-  <Step title="Choose or create a target deck">
-    Select an existing deck from the **Target deck** dropdown. If you want to create a new deck during the import, check **Create new deck** and enter a name for it.
+  <Step title="Provide the plain-text content">
+    Upload or paste the tab-separated export content.
   </Step>
 
-  <Step title="Upload a file or paste content">
-    You have two options:
-
-    - **Upload a file** — Click **Choose .txt file** and select the exported `.txt` file from your computer.
-    - **Paste directly** — Paste the tab-separated content into the text area. Useful for small sets of cards or quick one-off imports.
-
-    Both methods accept the same format.
-  </Step>
-
-  <Step title="Review the card count preview">
-    As soon as content is detected, the panel shows a count of how many cards were found, for example **14 cards detected**. Use this to confirm the content was parsed as expected before importing.
-  </Step>
-
-  <Step title="Click Import">
-    Click **Import N Cards** (where N is the number of detected cards). The button is disabled until a target deck and valid content are both present.
-  </Step>
-
-  <Step title="Check the result banner">
-    After the import completes, a result banner appears showing how many cards were successfully imported and how many lines produced errors. If there were errors, the banner lists the problematic lines so you can correct them.
+  <Step title="Run the import">
+    The backend parses the content and imports valid lines into the chosen deck.
   </Step>
 </Steps>
 
-## Example format
+## Parsing expectations
 
-```text
-# Kubernetes basics
-What is a Pod?	Smallest deployable unit in Kubernetes. Wraps one or more containers.
-What is a Deployment?	Manages ReplicaSets to maintain desired Pod count. Supports rolling updates.
-What is a Namespace?	A virtual cluster within a Kubernetes cluster used to isolate resources.
-What does kubectl get pods do?	Lists all pods in the current namespace.
-```
+- Valid lines are imported.
+- Comment lines are ignored.
+- Blank lines are ignored.
+- Malformed lines are reported as errors and skipped.
 
 <Note>
-  Lines starting with `#` are treated as comments and are skipped entirely during import. Blank lines are also ignored. Neither comments nor blank lines count toward the detected card total or the error count.
+  This docs site intentionally does not promise support for `.apkg` package import because the current code path documented in the repo and UI is the plain-text format.
 </Note>
-
-## Custom separator
-
-The default field separator is a tab character (`\t`), which matches Anki's default plain-text export. If your source file uses a different separator character, you can specify it by entering a single character as the custom separator when pasting content directly into the import panel.
-
-<Warning>
-  If a line cannot be parsed — for example because the tab separator is missing or the line contains only one field — it is counted as an error and skipped. The import continues processing all remaining valid lines, so a single malformed line does not cancel the entire import. Review the error details in the result banner and correct any affected lines before re-importing them.
-</Warning>

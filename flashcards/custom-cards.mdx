@@ -1,44 +1,39 @@
 ---
-title: "Creating and Editing Custom Flashcards"
+title: "Custom flashcards"
 sidebarTitle: "Custom Cards"
-description: "Add your own flashcards to any deck with a front, back, and optional code example. Edit any card inline during a study session without losing your place."
+description: "Add and edit your own flashcards in BlueAccademy."
 ---
 
-Every deck in Blue Accademy supports custom cards alongside the pre-seeded content. You can add a card to any deck at any time, and editing an existing card is just as easy — you can do it right in the middle of a study session without losing your place. Custom cards go through the same spaced-repetition scheduler as every other card, so your new content is treated exactly like the rest of your deck.
+Every flashcard deck can contain custom cards alongside seeded content. Custom cards use the same scheduler and persistence flow as seeded cards.
 
 ## Adding a card to a deck
 
-Click the **+ icon** on the deck row in the deck list to open the Create Card panel for that deck. The panel has three fields:
+Cards currently support these core fields:
 
 <ParamField body="Front" required>
-  The question or prompt shown on the unflipped side of the card. This is what you see before you test your recall. **Required.**
+  The question or prompt shown before you flip the card.
 </ParamField>
 
 <ParamField body="Back" required>
-  The answer or explanation revealed when you flip the card. **Required.**
+  The answer shown after you flip the card.
 </ParamField>
 
 <ParamField body="Code example" optional>
-  A code snippet displayed below the answer text when the card is flipped. Shown in a monospace block. Useful for `kubectl` commands, YAML snippets, Dockerfile lines, or Pulumi program examples. **Optional.**
+  Optional supporting code or command example.
 </ParamField>
 
-Fill in at least the Front and Back fields, then click **Add Card**. The card is immediately added to the deck and will appear in your next study session when the scheduler determines it is due.
+Once added, the card is stored through the backend and becomes part of that deck's future review queue.
 
 ## Card field formatting
 
-Both the Front and Back fields support a small subset of inline Markdown:
+Keep card content simple and readable. Favor:
 
-- `**bold text**` renders as **bold text**
-- `` `inline code` `` renders as styled inline code
-
-The Code example field is plain text only and is always displayed in a fixed-width monospace block. You do not need to wrap it in backticks or fences.
+- One prompt per front
+- One answer per back
+- Small code examples only when they make recall more concrete
 
 ## Editing a card inline during study
 
-You do not need to leave a study session to fix a typo or improve a card. While studying, click the **pencil icon** (✎) in the top-right corner of the card. The card transitions to an inline editor with three text areas for Front, Back, and Code example. Make your changes, then click **Save**. The updated content is visible immediately — the next time the card is shown, it reflects your edit.
+Card content can be edited without changing the underlying learning model. Content updates do not exist to reset progress. They exist to improve the card.
 
-The card's spaced-repetition progress (scheduling state, interval, ease factor, and review history) is fully preserved when you edit its content. Editing a card does not reset or alter when it is next due.
-
-<Tip>
-  Use the Code example field to attach a reference command or YAML snippet to any card. It appears after the answer text when you flip the card, making it easy to pair a concept question with a concrete example — for instance, pairing "What does `kubectl rollout undo` do?" with the exact command syntax.
-</Tip>
+The important behavior is that editing content should not wipe the progress state for that card.

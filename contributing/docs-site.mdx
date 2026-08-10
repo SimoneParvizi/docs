@@ -1,0 +1,86 @@
+---
+title: "Docs site development"
+sidebarTitle: "Docs Site"
+description: "Develop and maintain the Mintlify docs site for BlueAccademy."
+---
+
+This repository is a Mintlify docs site.
+
+## Local workflow
+
+Before you run the docs locally, make sure your Node version is compatible with the Mintlify CLI.
+
+Use an LTS Node release. Mintlify's CLI docs currently require Node.js `v20.17.0+` and recommend LTS releases.
+
+For this repo, prefer Node `22` through `nvm`.
+
+If `nvm` is installed, the practical flow is:
+
+```bash
+nvm install 22
+nvm use 22
+node -v
+```
+
+If `nvm` is not installed yet, install it first and then switch to Node `22` before you install the Mintlify CLI.
+
+Do not use the `mintlify` npm package for this repo. The CLI package you want is `mint`.
+
+Install the CLI with:
+
+```bash
+npm i -g mint
+```
+
+Then verify the command is available:
+
+```bash
+mint version
+```
+
+Run the docs locally from this repository:
+
+```bash
+mint dev
+```
+
+If `mint dev` fails immediately on a newer non-LTS Node version, switch to an LTS release first and reinstall `mint`.
+
+Core files:
+
+- `docs.json` for site navigation and config
+- `introduction.mdx` for the landing page
+- `README.md` for repository-level guidance
+
+## Writing standards for this site
+
+- Use active voice
+- Write to the reader as `you`
+- Keep headings short and in sentence case
+- Use code formatting for paths, commands, and identifiers
+- Prefer structured explanation over marketing copy
+
+## Information architecture rules
+
+When you change navigation:
+
+- Keep the stable flashcards slice easy to find
+- Keep status and architecture near the top
+- Do not create nav groups for unsupported product areas
+
+## Source of truth
+
+For product behavior, use:
+
+- The main repo README for status boundaries
+- The actual runtime files in `blueaccademy`
+- The flashcard backend and seed files for present behavior
+
+Do not use old docs pages as your only source. They may be the thing that needs correction.
+
+## Common docs mistakes
+
+- Treating route existence as public support
+- Copying Mintlify starter content forward
+- Locking docs to exact seeded content counts that will drift
+- Describing roadmap items as if they are already open

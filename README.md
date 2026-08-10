@@ -1,55 +1,86 @@
-# Mintlify Starter Kit
+# blueaccademy-docs
 
-Use the starter kit to get your docs deployed and ready to customize.
+This repository contains the Mintlify documentation site for BlueAccademy.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+Production site:
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+- `https://docks.blueaccademy.com/`
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+Related repositories and URLs:
 
-## AI-assisted writing
+- Main product repo: `~/blueaccademy`
+- Public docs index for LLMs: `https://docks.blueaccademy.com/llms.txt`
 
-Set up your AI coding tool to work with Mintlify:
+## What belongs here
+
+This repo documents:
+
+- What BlueAccademy currently supports
+- How to install the contributor toolchain
+- How to run the current stack locally
+- How the main product repo is structured
+- How the current application workflow behaves
+- How to contribute to the docs site
+
+This repo should not invent support for product areas that are still in progress.
+
+## Current product status
+
+The stable supported slice today is the flashcard system.
+
+In progress:
+
+- Guided terminal exercises
+
+Not yet supported:
+
+- CKAD-style simulations
+- Broader end-to-end labs
+- Chat
+- Hosted sandbox orchestration
+
+## Local docs development
+
+Use an LTS Node release before installing the Mintlify CLI. Mintlify's CLI docs currently require Node.js `v20.17.0+` and recommend LTS versions.
+
+Install the correct CLI package:
 
 ```bash
-npx skills add https://mintlify.com/docs
-```
-
-This command installs Mintlify's documentation skill for your configured AI tools like Claude Code, Cursor, Windsurf, and others. The skill includes component reference, writing standards, and workflow guidance.
-
-See the [AI tools guides](/ai-tools) for tool-specific setup.
-
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
 npm i -g mint
 ```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+Do not install `mintlify` for local docs development here.
 
+Verify the CLI:
+
+```bash
+mint version
 ```
+
+Run the docs locally from this repository:
+
+```bash
 mint dev
 ```
 
-View your local preview at `http://localhost:3000`.
+The local preview runs at `http://localhost:3000`.
 
-## Publishing changes
+## Editing guidance
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+- Keep docs aligned with the current state of `blueaccademy`
+- Prefer status accuracy over marketing language
+- Avoid turning internal code paths into public promises
+- Use Mintlify-friendly page structure and concise headings
+- Treat the main repo README as lightweight and this site as the deeper reference
 
-## Need help?
+## Useful files
 
-### Troubleshooting
+- `docs.json` for navigation and site config
+- `index.mdx` for the docs homepage
+- `flashcards/` for the current stable product slice
+- `architecture/` for repo/runtime structure
+- `contributing/` for contributor guidance
 
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
+## Mintlify references
 
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+- Mintlify docs: `https://mintlify.com/docs`

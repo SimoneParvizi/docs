@@ -1,29 +1,41 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "name": "Blue Accademy",
-  "theme": "aspen",
+  "name": "BlueAccademy",
+  "theme": "maple",
+  "logo": {
+    "light": "/logo/namelogo-compact.png",
+    "dark": "/logo/namelogo-compact-dark.png",
+    "href": "https://docks.blueaccademy.com/"
+  },
   "colors": {
     "primary": "#3B82F6",
     "light": "#EFF6FF",
     "dark": "#1E3A5F"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
+  "appearance": {
+    "default": "system",
+    "strict": false
+  },
   "navigation": {
     "tabs": [
       {
         "tab": "Documentation",
         "groups": [
           {
-            "group": "Get Started",
+            "group": "Getting Started",
             "pages": [
               "introduction",
               "quickstart",
+              "installation/rancher-desktop",
+              "installation/developer-tooling",
               "running-locally"
             ]
           },
           {
-            "group": "Flashcards",
+            "group": "Application",
             "pages": [
+              "product/status",
               "flashcards/overview",
               "flashcards/study-flow",
               "flashcards/decks",
@@ -33,12 +45,16 @@
             ]
           },
           {
-            "group": "Learning Tracks",
+            "group": "Architecture",
             "pages": [
-              "tracks/overview",
-              "tracks/kubernetes",
-              "tracks/docker",
-              "tracks/pulumi"
+              "architecture/overview"
+            ]
+          },
+          {
+            "group": "Contributor Setup",
+            "pages": [
+              "contributing/overview",
+              "contributing/docs-site"
             ]
           },
           {
@@ -46,32 +62,6 @@
             "pages": [
               "troubleshooting/faq",
               "troubleshooting/common-errors"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": [
-              "api/overview"
-            ]
-          },
-          {
-            "group": "Decks & Cards",
-            "pages": [
-              "api/decks",
-              "api/cards",
-              "api/import"
-            ]
-          },
-          {
-            "group": "Settings & Stats",
-            "pages": [
-              "api/settings",
-              "api/stats"
             ]
           }
         ]
@@ -83,5 +73,11 @@
       "type": "github",
       "href": "https://github.com/SimoneParvizi/blueaccademy"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/introduction"
+    }
+  ]
 }

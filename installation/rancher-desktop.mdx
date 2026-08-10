@@ -1,0 +1,255 @@
+---
+title: "Install Rancher Desktop"
+sidebarTitle: "Rancher Desktop"
+description: "Install Rancher Desktop as the preferred local container and Kubernetes runtime for BlueAccademy development."
+---
+
+BlueAccademy local setup should now start with Rancher Desktop.
+
+We prefer Rancher Desktop over a plain Docker-only setup because it gives you:
+
+- A local container runtime
+- Built-in Kubernetes
+- Bundled `kubectl`
+- Bundled Helm
+- A simpler path for contributors who will need both containers and Kubernetes
+
+This page is based on the official Rancher Desktop site and installation docs as checked on August 9, 2026.
+
+## Why Rancher Desktop comes first
+
+BlueAccademy is broader than a plain Docker-only local app. Rancher Desktop is the preferred base because it gives you:
+
+- Container runtime support
+- Local Kubernetes
+- Bundled Kubernetes tooling
+
+That reduces setup drift later.
+
+## Official references
+
+- [Rancher Desktop home](https://rancherdesktop.io/)
+- [Rancher Desktop installation docs](https://docs.rancherdesktop.io/getting-started/installation/)
+
+## Before you install
+
+Pick the right platform path first:
+
+- macOS
+- Windows
+- Linux
+
+Do not skip platform requirements. Rancher Desktop depends on virtualization support, and on Windows it depends on WSL2 being installed before Rancher Desktop itself.
+
+## What Rancher Desktop provides
+
+After installation, Rancher Desktop provides local access to common container and Kubernetes tooling, including:
+
+- `kubectl`
+- Helm
+- `nerdctl`
+- Docker-compatible tooling when you choose the Moby engine
+
+BlueAccademy does not need every Rancher Desktop feature on day one, but it does need a working local runtime before the stack can start reliably.
+
+## macOS installation
+
+### Requirements
+
+According to the official installation docs, Rancher Desktop currently requires:
+
+- macOS 13 Ventura or later
+- Apple Silicon or Intel CPU with virtualization support
+- Persistent internet connection
+
+The official docs also recommend:
+
+- 8 GB RAM
+- 4 CPU
+
+### Steps
+
+<Steps>
+  <Step title="Download the correct macOS build">
+    Open the official Rancher Desktop releases page and download the build that matches your machine.
+  </Step>
+  <Step title="Install the application">
+    Open the `.dmg`, then drag Rancher Desktop into `Applications`.
+  </Step>
+  <Step title="Launch Rancher Desktop">
+    Start Rancher Desktop from `Applications`. On first launch it may take time to download Kubernetes images and initialize its runtime.
+  </Step>
+  <Step title="Verify the local tools">
+    Confirm the app reaches a healthy state, confirm Kubernetes is enabled, then run:
+
+    ```bash
+    kubectl version --client
+    helm version
+    ```
+
+    If `kubectl` is not found in your shell, restart the terminal after Rancher Desktop finishes initialization.
+  </Step>
+</Steps>
+
+## Windows installation
+
+### Requirements
+
+According to the official installation docs, Rancher Desktop currently requires:
+
+- Windows 11 with latest updates, including Home edition, or
+- Windows Server 2025 with latest updates
+- Hardware virtualization support
+- Persistent internet connection
+- WSL2 installed before Rancher Desktop
+
+The official docs also recommend:
+
+- 8 GB RAM
+- 4 CPU
+
+### Critical prerequisite: install WSL2 first
+
+Rancher Desktop requires Windows Subsystem for Linux before its own installer runs correctly.
+
+If WSL2 is not already installed, install it from an elevated PowerShell session:
+
+```powershell
+wsl --install
+```
+
+Then reboot Windows if prompted.
+
+After reboot, verify WSL is available:
+
+```powershell
+wsl --status
+```
+
+If you skip this step, you are creating a setup failure before BlueAccademy even enters the picture.
+
+### Steps
+
+<Steps>
+  <Step title="Install WSL2 first">
+    From an elevated PowerShell session:
+
+    ```powershell
+    wsl --install
+    ```
+
+    Reboot if prompted, then verify:
+
+    ```powershell
+    wsl --status
+    ```
+  </Step>
+  <Step title="Install Rancher Desktop">
+    Open the official releases page, download the Windows `.msi`, run the installer, accept the license agreement, and finish the setup wizard.
+  </Step>
+  <Step title="Launch the app">
+    Start Rancher Desktop and allow it to initialize the runtime.
+  </Step>
+  <Step title="Verify the local tools">
+    Confirm the runtime is healthy, confirm Kubernetes is enabled, then run:
+
+    ```powershell
+    kubectl version --client
+    helm version
+    ```
+  </Step>
+</Steps>
+
+### Privileged service note
+
+The official docs note that Windows admin intervention may be required for the Rancher Desktop privileged service.
+
+That matters if you need to expose applications or services beyond `127.0.0.1`.
+
+For BlueAccademy local development, loopback-only access is often enough, but skipping privileged components can change networking behavior later.
+
+### What to verify on Windows
+
+After Rancher Desktop opens:
+
+- Confirm Rancher Desktop reports a healthy runtime
+- Confirm Kubernetes is enabled
+- Open PowerShell and run:
+
+```powershell
+kubectl version --client
+helm version
+```
+
+## Linux installation
+
+### Requirements
+
+According to the official installation docs, Rancher Desktop currently requires:
+
+- A Linux distribution that can install `.deb`, `.rpm`, or AppImage packages
+- Persistent internet connection
+- x86_64 CPU with AMD-V or VT-x
+- Read-write access to `/dev/kvm`
+
+The official docs also recommend:
+
+- 8 GB RAM
+- 4 CPU
+
+### Critical prerequisite: verify `/dev/kvm` access
+
+Before installing Rancher Desktop, verify that your user can access `/dev/kvm`:
+
+```bash
+[ -r /dev/kvm ] && [ -w /dev/kvm ] || echo 'insufficient privileges'
+```
+
+If you get `insufficient privileges`, add your user to the `kvm` group:
+
+```bash
+sudo usermod -a -G kvm "$USER"
+```
+
+Then reboot.
+
+If you do not fix `/dev/kvm` access first, Rancher Desktop will not have the virtualization support it expects.
+
+### Steps
+
+<Steps>
+  <Step title="Verify KVM access">
+    Before installation, verify:
+
+    ```bash
+    [ -r /dev/kvm ] && [ -w /dev/kvm ] || echo 'insufficient privileges'
+    ```
+
+    If needed, add your user to the `kvm` group and reboot:
+
+    ```bash
+    sudo usermod -a -G kvm "$USER"
+    ```
+  </Step>
+  <Step title="Install Rancher Desktop">
+    On Ubuntu and Debian, the official docs currently recommend:
+
+    ```bash
+    curl -s https://download.opensuse.org/repositories/isv:/Rancher:/stable/deb/Release.key | gpg --dearmor | sudo dd status=none of=/usr/share/keyrings/isv-rancher-stable-archive-keyring.gpg
+    echo 'deb [signed-by=/usr/share/keyrings/isv-rancher-stable-archive-keyring.gpg] https://download.opensuse.org/repositories/isv:/Rancher:/stable/deb/ ./' | sudo dd status=none of=/etc/apt/sources.list.d/isv-rancher-stable.list
+    sudo apt update
+    sudo apt install rancher-desktop
+    ```
+  </Step>
+  <Step title="Launch the app">
+    Start Rancher Desktop and wait for it to initialize. On some GNOME-based distributions the tray icon may not be visible by default.
+  </Step>
+  <Step title="Verify the local tools">
+    Confirm the runtime is healthy, confirm Kubernetes is enabled, then run:
+
+    ```bash
+    kubectl version --client
+    helm version
+    ```
+  </Step>
+</Steps>

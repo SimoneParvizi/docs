@@ -1,62 +1,47 @@
 ---
-title: "Configuring Flashcard Scheduler Settings"
+title: "Flashcard settings"
 sidebarTitle: "Settings"
-description: "Tune how Blue Accademy schedules flashcard reviews: daily new card limits, learning steps, relearning steps, and minimum review intervals."
+description: "Tune the scheduler settings for the BlueAccademy flashcard system."
 ---
 
-Blue Accademy's scheduler settings let you control how aggressively new cards are introduced each day and how review intervals are calculated after each rating. A single set of settings applies globally to all decks, so any change you make affects every deck you study. Tuning these values lets you match the pace of the system to your available study time and your desired retention level.
+Flashcard settings control how quickly new cards enter your study flow and how intervals evolve after each rating.
 
 ## How to open settings
 
-From the main Flashcards page (when you are **not** inside a study session), click the **⚙ gear icon** next to the "Flashcards" heading in the top-left of the page. The settings panel opens as a modal overlay. Changes are saved when you click **Save Settings**.
+Settings are managed from the flashcards UI and apply to the flashcard system as a whole.
 
 ## Settings reference
 
 <ParamField body="newCardsPerDay" type="integer" default="2">
-  The maximum number of new cards introduced across all decks in a single day. Once this limit is reached, no further New cards are added to any session queue until the next calendar day. Set this to `0` to pause new cards entirely without affecting cards already in Learning or Review.
+  Maximum number of new cards introduced per day.
 </ParamField>
 
 <ParamField body="learningSteps" type="string" default="10m 1d 3d">
-  A space-separated list of time delays that a new card must pass through before graduating to the Review state. Each entry is a duration value in minutes (`m`), hours (`h`), or days (`d`).
-
-  For example, `10m 1d 3d` means:
-  - After the first **Good** rating: show again in 10 minutes (still in the same session)
-  - After the second **Good** rating: show again in 1 day
-  - After the third **Good** rating: the card graduates to Review
-
-  A **Blackout** rating sends the card back to the first step. An **Easy** rating lets the card skip all remaining steps and jump directly to the easy review interval.
+  Space-separated learning step durations for new cards.
 </ParamField>
 
 <ParamField body="relearningSteps" type="string" default="10m">
-  A space-separated list of time delays applied when a Review card is rated **Blackout** and must be relearned. The format is identical to `learningSteps`. After the card works through all relearning steps, it returns to the Review state.
-
-  For example, `10m` means the card comes back in 10 minutes, then re-enters Review.
+  Space-separated relearning durations for cards that were forgotten from review.
 </ParamField>
 
 <ParamField body="minimumInterval" type="integer (days)" default="1">
-  The smallest allowed review interval in days when scheduling a Review card. The scheduler will never schedule a Review card sooner than this value, regardless of other calculations. Raising this value prevents cards from returning too quickly after a Hard or Blackout rating.
+  Minimum allowed review interval in days.
 </ParamField>
 
 <ParamField body="easyReviewInterval" type="integer (days)" default="9">
-  The interval in days applied when a New or Learning card is rated **Easy**. An Easy rating lets the card skip all remaining learning steps and jump directly to the Review state with this interval. Higher values mean the card comes back less frequently after an Easy rating.
+  Review interval used when a card is rated Easy from new or learning.
 </ParamField>
 
 <ParamField body="normalReviewInterval" type="integer (days)" default="7">
-  The first long-term review interval in days when a card graduates from Learning to Review through the standard path (completing all learning steps with Good ratings). After this first Review interval, subsequent intervals grow based on the card's ease factor and your continued ratings.
+  First review interval used when a card graduates through the normal learning path.
 </ParamField>
 
 ## Learning steps format
 
-All step-based settings (`learningSteps` and `relearningSteps`) use space-separated duration strings. Supported units are:
+Step-based settings use space-separated duration tokens:
 
 | Suffix | Unit | Example |
 |---|---|---|
 | `m` | Minutes | `10m` — 10 minutes |
 | `h` | Hours | `2h` — 2 hours |
 | `d` | Days | `3d` — 3 days |
-
-You can combine any number of steps, for example: `5m 30m 12h 2d 7d`. Each step represents one **Good** rating in sequence.
-
-<Tip>
-  If you find yourself re-seeing Review cards too soon after they graduate, increase `normalReviewInterval` or `minimumInterval`. If cards are graduating out of Learning faster than you can retain them, add more steps to `learningSteps` or shorten the intervals between existing steps. There is no single right configuration — start with the defaults and adjust based on your experience over the first few weeks of study.
-</Tip>
