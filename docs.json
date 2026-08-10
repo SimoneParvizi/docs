@@ -1,11 +1,11 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "name": "BlueAccademy",
+  "name": "blueAccademy",
   "theme": "maple",
   "logo": {
     "light": "/logo/namelogo-compact.png",
     "dark": "/logo/namelogo-compact-dark.png",
-    "href": "https://docks.blueaccademy.com/"
+    "href": "https://docs.blueaccademy.com/"
   },
   "colors": {
     "primary": "#3B82F6",
@@ -79,5 +79,14 @@
       "source": "/",
       "destination": "/introduction"
     }
-  ]
+  ],
+  "description": "blueAccademy is an open source learning platform for Kubernetes, Docker, Pulumi, GitHub Actions, and adjacent infrastructure workflows. This documentation covers installation, local development, architecture, and the current supported application flows",
+  "seo": {
+    "metatags": {
+      "description": "blueAccademy is an open source learning platform for Kubernetes, Docker, Pulumi, GitHub Actions, and adjacent infrastructure workflows. This documentation covers installation, local development, architecture, and the current supported application flows",
+      "og:site_name": "BlueAccademy Docs",
+      "robots": "\"index, follow\"",
+      "canonical": "\"https://docs.blueaccademy.com\""
+    }
+  }
 }
